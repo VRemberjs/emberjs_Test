@@ -72,7 +72,7 @@
 	
 	<script type="text/x-handlebars" data-template-name="song-list-view">
 		<td>
-			{{#linkTo 'list.song' this}}
+			{{#linkTo 'list_song' this}}
 				<span class="span1-5">{{title}}</span>
 				<span class="span1-5">{{time}}</span>
 				<span class="span1-5">{{author}}</span>
@@ -81,11 +81,7 @@
 			{{/linkTo}}
 		</td>
 	</script>
-	
-	<script type="text/x-handlebars" data-template-name="song">
 		
-	</script>
-	
 	<!--------------		List View End			-------------->	
 	
 	<!--------------		Grid View Start			-------------->
@@ -95,7 +91,7 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="song-grid-view">
-		{{#linkTo 'grid.song' this class="cont"}}
+		{{#linkTo 'grid_song' this class="cont"}}
 			<img {{bindAttr src=icon}} />
 			<span><b>{{title}}</b></span>
 			<span>{{author}}</span>

@@ -4,10 +4,10 @@
 
 window.App = Ember.Application.create({
 	ready: function() {
-		Em.Logger.info('The App is loaded!!!');
+		// Em.Logger.info('The App is loaded!!!');
 	},
 	// LOG_TRANSITIONS_INTERNAL: true,
-	LOG_TRANSITIONS: true
+	// LOG_TRANSITIONS: true
 });
 
 /****************************
@@ -17,10 +17,10 @@ window.App = Ember.Application.create({
 App.Router.map(function() {
 	// put your routes here
 	this.resource('list', function() {
-		this.route('song', { path: '/:song_id' });
+		this.resource('list_song', { path: '/:song_id' });
 	});
 	this.resource('grid', function() {
-		this.route('song', { path: '/:song_id' });
+		this.resource('grid_song', { path: '/:song_id' });
 	});
 });
 
@@ -52,17 +52,15 @@ App.ApplicationRoute = Ember.Route.extend({
 });
 
 
-
-App.SongRoute = Ember.Route.extend({
+App.ListRoute = Ember.Route.extend({
 	model: function() {
-		// App.Song.find();
-		window.KKK = this.get('controller');
+		App.SongsController.set('content', App.Song.find());
 	}
 });
 
-App.ListRoute = Ember.Route.extend({
+App.GridRoute = Ember.Route.extend({
 	model: function() {
-		window.LIST = this;
+		App.SongsController.set('content', App.Song.find());
 	}
 });
 
@@ -76,7 +74,6 @@ App.Store = DS.Store.extend({
 	adapter: 'DS.FixtureAdapter'
 });
 
-
 App.Song = DS.Model.extend({
 	title: DS.attr('string'),
 	time: DS.attr('number'),
@@ -88,16 +85,6 @@ App.Song = DS.Model.extend({
 
 App.Song.FIXTURES = PlayList;
 
-/* 
-App.Song = Ember.Object.extend({
-	title: null,
-	time: null,
-	author: null,
-	genre: null,
-	album: null,
-	icon: null
-}); */
-
 
 /****************************
 *		 Controllers		*
@@ -106,16 +93,16 @@ App.Song = Ember.Object.extend({
 App.ApplicationController = Em.Controller.extend({
 	meta_info: '',
 	sortBy: function(prop) {
-		App.SongController.set('sortProperties', [prop]);
+		App.SongsController.set('sortProperties', [prop]);
 	},
 	getFormatMeta: function(data) {
 		data = data || {};
 		return [
-			'Title: ' + data.title,
-			'Author: ' + data.author,
-			'Album: ' + data.album,
-			'Genres: ' + data.genre,
-			' (Time: ' + data.time + ')'
+			'Title: ' + data.get('title'),
+			'Author: ' + data.get('author'),
+			'Album: ' + data.get('album'),
+			'Genres: ' + data.get('genre'),
+			' (Time: ' + data.get('time') + ')'
 		].join(' | ');
 	},
 	play: function() {
@@ -123,7 +110,7 @@ App.ApplicationController = Em.Controller.extend({
 			currSong = {};
 			
 		if ( currSongId ) {
-			currSong = $.extend({}, App.SongController.content.get(currSongId));
+			currSong = App.Song.find(currSongId);
 		}
 		this.set('meta_info', this.getFormatMeta(currSong));
 	}
@@ -133,8 +120,7 @@ App.ListController = Em.ArrayController.extend({
 	
 });
 
-App.SongController = Ember.ArrayController.create({
-	content: PlayList,
+App.SongsController = Ember.ArrayController.create({
 	sortProperties: ['title'],
 	sortAscending: true
 });
@@ -164,13 +150,13 @@ App.SongGridView = Ember.View.extend({
 App.SongsListView = Ember.CollectionView.extend({
 	tagName: 'tbody',
 	itemViewClass: App.SongListView,
-	content: App.SongController
+	content: App.SongsController
 });
 
 App.SongsGridView = Ember.CollectionView.extend({
 	tagName: 'div',
 	itemViewClass: App.SongGridView,
-	content: App.SongController
+	content: App.SongsController
 });
 
 
