@@ -66,17 +66,6 @@ App.ApplicationRoute = Ember.Route.extend({
 });
 
 
-App.ListSongController = Ember.Controller.extend({
-	init: function() {
-		this.send('setSelectedSong');
-	}
-});
-
-App.GridSongController = Ember.Controller.extend({
-	init: function() {
-		this.send('setSelectedSong');
-	}
-});
 
 App.ListRoute = Ember.Route.extend({
 	model: function() {
@@ -123,6 +112,19 @@ App.Song.FIXTURES = PlayList;
 /****************************
 *		 Controllers		*
 *****************************/
+
+
+App.ListSongController = Ember.Controller.extend({
+	init: function() {
+		this.send('setSelectedSong');
+	}
+});
+
+App.GridSongController = Ember.Controller.extend({
+	init: function() {
+		this.send('setSelectedSong');
+	}
+});
 
 App.ApplicationController = Em.Controller.extend({
 	isPlay: false,
