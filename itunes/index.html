@@ -20,13 +20,13 @@
 					</div>
 					<div class="clearfix span8">
 						<div style="float: left;margin-top: 15px;">
-							<div class="round-btn-15 btn">
+							<div class="round-btn-15 btn disabled">
 								<i class='icon-arrow-left'></i>
 							</div>
-							<div class="btn round-btn-25 btn-large">
-								<i class='icon-play' {{action 'play'}}></i>
+							<div {{bindAttr class=":btn :round-btn-25 :btn-large isSelectedSong::disabled"}}>
+								<i {{bindAttr class='isPlay:icon-pause:icon-play'}} {{action 'play'}}></i>
 							</div>
-							<div class="btn round-btn-15">
+							<div class="btn round-btn-15 disabled">
 								<i class='icon-arrow-right'></i>
 							</div>
 						</div>
@@ -37,8 +37,9 @@
 			<div class="span2">
 				<ul class="nav">
 					{{#each item in model}}
-						<h5 class="accordion-toggle" {{action 'sortBy' item.prop}}>{{item.title}}</h5>
-						<!-- <li {{action 'sortBy' item.prop}}>{{#linkTo 'list'}}{{item.title}}{{/linkTo}}</li> -->
+						<h5 class="accordion-toggle" {{action 'sortBy' item.prop}}>
+							{{item.title}}
+						</h5>
 					{{/each}}
 				</ul>
 			</div>

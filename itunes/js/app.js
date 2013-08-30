@@ -4,10 +4,14 @@
 
 window.App = Ember.Application.create({
 	ready: function() {
+		var path = location.hash.substr(1).split('/')[1];
+		if ( -1 == $.inArray(path, ['list', 'grid']) ) {
+			location.hash = '#/list';
+		}
 		// Em.Logger.info('The App is loaded!!!');
-	},
-	// LOG_TRANSITIONS_INTERNAL: true,
-	// LOG_TRANSITIONS: true
+	}
+	//, LOG_TRANSITIONS_INTERNAL: true
+	//, LOG_TRANSITIONS: true
 });
 
 /****************************
@@ -27,19 +31,21 @@ App.Router.map(function() {
 App.LoadingRoute = Ember.Route.extend({});
 
 App.ApplicationRoute = Ember.Route.extend({
+	init: function() {
+		App.SongsController.set('content', App.Song.find());
+	},
 	model: function() {
-		// this.transitionTo('list');
 		return [{
-			prop: 'title',
+			prop: ['title'],
 			title: 'Alphabetical'
 		},{
-			prop: 'genre',
+			prop: ['genre'],
 			title: 'By Genres'
 		},{
-			prop: 'author',
+			prop: ['author'],
 			title: 'By Author'
 		},{
-			prop: 'album',
+			prop: ['album'],
 			title: 'By Album'
 		}];
 	},
@@ -47,20 +53,28 @@ App.ApplicationRoute = Ember.Route.extend({
 		setMetaInfo: function(data) {
 			var  metaData = this.get('controller').getFormatMeta(data);
 			this.get('controller').set('meta_info', metaData);
+		},
+		setSelectedSong: function() {
+			this.get('controller').set('isSelectedSong', true);
 		}
 	}
 });
 
-
 App.ListRoute = Ember.Route.extend({
 	model: function() {
-		App.SongsController.set('content', App.Song.find());
+		var sid = App.Router.router.currentParams;
+		if ( sid && sid.song_id ) {
+			this.transitionTo('/list/' + sid.song_id);
+		}
 	}
 });
 
 App.GridRoute = Ember.Route.extend({
 	model: function() {
-		App.SongsController.set('content', App.Song.find());
+		var sid = App.Router.router.currentParams;
+		if ( sid && sid.song_id ) {
+			this.transitionTo('/grid/' + sid.song_id);
+		}
 	}
 });
 
@@ -90,13 +104,39 @@ App.Song.FIXTURES = PlayList;
 *		 Controllers		*
 *****************************/
 
+App.ListSongController = Ember.Controller.extend({
+	init: function() {
+		this.send('setSelectedSong');
+	}
+});
+
+App.GridSongController = Ember.Controller.extend({
+	init: function() {
+		this.send('setSelectedSong');
+	}
+});
+
+
 App.ApplicationController = Em.Controller.extend({
+	isPlay: false,
+	isSelectedSong: false,
+	getCurrSongId: function() {
+		if ( App.Router.router.currentParams ) {
+			return App.Router.router.currentParams.song_id || false;
+		}
+	},
 	meta_info: '',
 	sortBy: function(prop) {
-		App.SongsController.set('sortProperties', [prop]);
+		var curProp = App.SongsController.get('sortProperties');
+		if ( 0 === Em.compare(prop, curProp) ) {
+			App.SongsController.toggleProperty('sortAscending');
+		} else {
+			App.SongsController.set('sortAscending', true);
+			App.SongsController.set('sortProperties', prop);
+		}
 	},
 	getFormatMeta: function(data) {
-		data = data || {};
+		data = data || {get: function(){return ''}};
 		return [
 			'Title: ' + data.get('title'),
 			'Author: ' + data.get('author'),
@@ -106,9 +146,13 @@ App.ApplicationController = Em.Controller.extend({
 		].join(' | ');
 	},
 	play: function() {
-		var currSongId = App.Router.router.currentParams.song_id,
+		if ( !this.isSelectedSong ) {
+			return;
+		}
+		var currSongId = this.getCurrSongId(),
 			currSong = {};
 			
+		this.set('isPlay', !this.get('isPlay'));
 		if ( currSongId ) {
 			currSong = App.Song.find(currSongId);
 		}
