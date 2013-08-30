@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Ember Starter Kit</title>
+  <link rel="stylesheet" href="css/qunit.css">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/bootstrap.css">
   <link rel="stylesheet" href="css/style.css">
@@ -37,9 +38,9 @@
 			<div class="span2">
 				<ul class="nav">
 					{{#each item in model}}
-						<h5 class="accordion-toggle" {{action 'sortBy' item.prop}}>
+						<li><h5 class="accordion-toggle" {{action 'sortBy' item.prop}}>
 							{{item.title}}
-						</h5>
+						</h5></li>
 					{{/each}}
 				</ul>
 			</div>
@@ -101,17 +102,26 @@
 		{{/linkTo}}
 	</script>
 	
-	<!--------------		Grid View End			-------------->
+	<!--------------		Grid View End			-------------->	
 	
-		
-	</script>
 
 	<script src="js/libs/jquery-1.9.1.js"></script>
+	
+	
 	<script src="js/libs/handlebars-1.0.0.js"></script>
 	<script src="js/libs/ember-1.0.0-rc.7.js"></script>	
 	<script src="js/libs/ember-data-latest.js"></script>
 	<script src="js/playlist.js"></script>
 	<script src="js/app.js"></script>
-
+	
+	
+<!--	
+	Uncomment this block for unit testing
+	
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<script src="js/libs/qunit.js"></script>
+	<script src="js/app_unit_test.js"></script>
+ -->
 </body>
 </html>

@@ -4,15 +4,13 @@
 
 window.App = Ember.Application.create({
 	ready: function() {
-		var path = location.hash.substr(1).split('/')[1];
-		if ( -1 == $.inArray(path, ['list', 'grid']) ) {
-			location.hash = '#/list';
-		}
-		// Em.Logger.info('The App is loaded!!!');
+		/*  */
 	}
 	//, LOG_TRANSITIONS_INTERNAL: true
 	//, LOG_TRANSITIONS: true
 });
+
+
 
 /****************************
 *		 Routing			*
@@ -29,6 +27,13 @@ App.Router.map(function() {
 });
 
 App.LoadingRoute = Ember.Route.extend({});
+
+App.IndexRoute = Ember.Route.extend({
+	redirect: function() {
+		this.transitionTo('list');
+	}
+});
+
 
 App.ApplicationRoute = Ember.Route.extend({
 	init: function() {
@@ -60,6 +65,19 @@ App.ApplicationRoute = Ember.Route.extend({
 	}
 });
 
+
+App.ListSongController = Ember.Controller.extend({
+	init: function() {
+		this.send('setSelectedSong');
+	}
+});
+
+App.GridSongController = Ember.Controller.extend({
+	init: function() {
+		this.send('setSelectedSong');
+	}
+});
+
 App.ListRoute = Ember.Route.extend({
 	model: function() {
 		var sid = App.Router.router.currentParams;
@@ -85,7 +103,9 @@ App.GridRoute = Ember.Route.extend({
 
 App.Store = DS.Store.extend({
 	revision: 12,
-	adapter: 'DS.FixtureAdapter'
+	adapter : DS.FixtureAdapter.create({
+		simulateRemoteResponse : false
+	})
 });
 
 App.Song = DS.Model.extend({
@@ -103,19 +123,6 @@ App.Song.FIXTURES = PlayList;
 /****************************
 *		 Controllers		*
 *****************************/
-
-App.ListSongController = Ember.Controller.extend({
-	init: function() {
-		this.send('setSelectedSong');
-	}
-});
-
-App.GridSongController = Ember.Controller.extend({
-	init: function() {
-		this.send('setSelectedSong');
-	}
-});
-
 
 App.ApplicationController = Em.Controller.extend({
 	isPlay: false,
@@ -202,8 +209,6 @@ App.SongsGridView = Ember.CollectionView.extend({
 	itemViewClass: App.SongGridView,
 	content: App.SongsController
 });
-
-
 
 
 
